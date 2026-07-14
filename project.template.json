@@ -1,0 +1,258 @@
+{
+  "targets": [
+    {
+      "isStage": true,
+      "name": "Stage",
+      "variables": {},
+      "lists": {},
+      "broadcasts": {},
+      "blocks": {},
+      "comments": {},
+      "currentCostume": 0,
+      "costumes": [
+        {
+          "name": "поле",
+          "bitmapResolution": 1,
+          "dataFormat": "png",
+          "assetId": "{{FIELD_MD5}}",
+          "md5ext": "{{FIELD_MD5EXT}}",
+          "rotationCenterX": 240,
+          "rotationCenterY": 180
+        },
+        {
+          "name": "старт",
+          "bitmapResolution": 1,
+          "dataFormat": "png",
+          "assetId": "{{START_MD5}}",
+          "md5ext": "{{START_MD5EXT}}",
+          "rotationCenterX": 240,
+          "rotationCenterY": 180
+        }
+      ],
+      "sounds": [],
+      "volume": 100,
+      "layerOrder": 0,
+      "tempo": 60,
+      "videoTransparency": 50,
+      "videoState": "on",
+      "textToSpeechLanguage": null
+    },
+    {
+      "isStage": false,
+      "name": "Дом",
+      "variables": {},
+      "lists": {},
+      "broadcasts": {},
+      "blocks": {},
+      "comments": {},
+      "currentCostume": 0,
+      "costumes": [
+        {
+          "name": "дом",
+          "bitmapResolution": 1,
+          "dataFormat": "png",
+          "assetId": "{{HOUSE_MD5}}",
+          "md5ext": "{{HOUSE_MD5EXT}}",
+          "rotationCenterX": {{HOUSE_CX}},
+          "rotationCenterY": {{HOUSE_CY}}
+        }
+      ],
+      "sounds": [],
+      "volume": 100,
+      "visible": true,
+      "x": -200,
+      "y": -25,
+      "size": 75,
+      "direction": 90,
+      "draggable": false,
+      "rotationStyle": "all around",
+      "layerOrder": 1
+    },
+    {
+      "isStage": false,
+      "name": "Платформа1",
+      "variables": {},
+      "lists": {},
+      "broadcasts": {},
+      "blocks": {},
+      "comments": {},
+      "currentCostume": 0,
+      "costumes": [
+        {
+          "name": "платформа",
+          "bitmapResolution": 1,
+          "dataFormat": "png",
+          "assetId": "{{PLATFORM_MD5}}",
+          "md5ext": "{{PLATFORM_MD5EXT}}",
+          "rotationCenterX": {{PLATFORM_CX}},
+          "rotationCenterY": {{PLATFORM_CY}}
+        }
+      ],
+      "sounds": [],
+      "volume": 100,
+      "visible": true,
+      "x": -170,
+      "y": -155,
+      "size": 100,
+      "direction": 90,
+      "draggable": false,
+      "rotationStyle": "don't rotate",
+      "layerOrder": 2
+    },
+    {
+      "isStage": false,
+      "name": "Платформа2",
+      "variables": {},
+      "lists": {},
+      "broadcasts": {},
+      "blocks": {},
+      "comments": {},
+      "currentCostume": 0,
+      "costumes": [
+        {
+          "name": "платформа",
+          "bitmapResolution": 1,
+          "dataFormat": "png",
+          "assetId": "{{PLATFORM_MD5}}",
+          "md5ext": "{{PLATFORM_MD5EXT}}",
+          "rotationCenterX": {{PLATFORM_CX}},
+          "rotationCenterY": {{PLATFORM_CY}}
+        }
+      ],
+      "sounds": [],
+      "volume": 100,
+      "visible": true,
+      "x": -20,
+      "y": -155,
+      "size": 100,
+      "direction": 90,
+      "draggable": false,
+      "rotationStyle": "don't rotate",
+      "layerOrder": 3
+    },
+    {
+      "isStage": false,
+      "name": "Платформа3",
+      "variables": {},
+      "lists": {},
+      "broadcasts": {},
+      "blocks": {},
+      "comments": {},
+      "currentCostume": 0,
+      "costumes": [
+        {
+          "name": "платформа",
+          "bitmapResolution": 1,
+          "dataFormat": "png",
+          "assetId": "{{PLATFORM_MD5}}",
+          "md5ext": "{{PLATFORM_MD5EXT}}",
+          "rotationCenterX": {{PLATFORM_CX}},
+          "rotationCenterY": {{PLATFORM_CY}}
+        }
+      ],
+      "sounds": [],
+      "volume": 100,
+      "visible": true,
+      "x": 140,
+      "y": -155,
+      "size": 100,
+      "direction": 90,
+      "draggable": false,
+      "rotationStyle": "don't rotate",
+      "layerOrder": 4
+    },
+    {
+      "isStage": false,
+      "name": "Жук",
+      "variables": {},
+      "lists": {},
+      "broadcasts": {},
+      "blocks": {},
+      "comments": {},
+      "currentCostume": 0,
+      "costumes": [
+        {
+          "name": "жук",
+          "bitmapResolution": 1,
+          "dataFormat": "png",
+          "assetId": "{{ENEMY_MD5}}",
+          "md5ext": "{{ENEMY_MD5EXT}}",
+          "rotationCenterX": {{ENEMY_CX}},
+          "rotationCenterY": {{ENEMY_CY}}
+        }
+      ],
+      "sounds": [],
+      "volume": 100,
+      "visible": true,
+      "x": 160,
+      "y": -110,
+      "size": 100,
+      "direction": 90,
+      "draggable": false,
+      "rotationStyle": "left-right",
+      "layerOrder": 5
+    },
+    {
+      "isStage": false,
+      "name": "Божья коровка",
+      "variables": {},
+      "lists": {},
+      "broadcasts": {},
+      "blocks": {
+        "heroFlag": {
+          "opcode": "event_whenflagclicked",
+          "next": "heroGo",
+          "parent": null,
+          "inputs": {},
+          "fields": {},
+          "shadow": false,
+          "topLevel": true,
+          "x": 20,
+          "y": 20
+        },
+        "heroGo": {
+          "opcode": "motion_gotoxy",
+          "next": null,
+          "parent": "heroFlag",
+          "inputs": {
+            "X": [1, [4, "-50"]],
+            "Y": [1, [4, "-110"]]
+          },
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        }
+      },
+      "comments": {},
+      "currentCostume": 0,
+      "costumes": [
+        {
+          "name": "коровка",
+          "bitmapResolution": 1,
+          "dataFormat": "png",
+          "assetId": "{{HERO_MD5}}",
+          "md5ext": "{{HERO_MD5EXT}}",
+          "rotationCenterX": {{HERO_CX}},
+          "rotationCenterY": {{HERO_CY}}
+        }
+      ],
+      "sounds": [],
+      "volume": 100,
+      "visible": true,
+      "x": -50,
+      "y": -110,
+      "size": 100,
+      "direction": 90,
+      "draggable": false,
+      "rotationStyle": "left-right",
+      "layerOrder": 6
+    }
+  ],
+  "monitors": [],
+  "extensions": [],
+  "meta": {
+    "semver": "3.0.0",
+    "vm": "11.5.0",
+    "agent": "Mozilla/5.0 Scratch Offline Project Builder"
+  }
+}
