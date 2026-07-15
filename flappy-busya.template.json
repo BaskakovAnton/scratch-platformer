@@ -1,0 +1,1705 @@
+{
+  "targets": [
+    {
+      "isStage": true,
+      "name": "Stage",
+      "variables": {
+        "varScore": ["очки", 0],
+        "varGap": ["щель", 0],
+        "varAlive": ["жива", 1]
+      },
+      "lists": {},
+      "broadcasts": {
+        "brStart": "старт",
+        "brPipe": "труба",
+        "brTv": "телевизор",
+        "brOver": "конец",
+        "brClear": "очистка"
+      },
+      "blocks": {
+        "s_flag": {
+          "opcode": "event_whenflagclicked",
+          "next": "s_backdrop",
+          "parent": null,
+          "inputs": {},
+          "fields": {},
+          "shadow": false,
+          "topLevel": true,
+          "x": 40,
+          "y": 40
+        },
+        "s_backdrop": {
+          "opcode": "looks_switchbackdropto",
+          "next": "s_start",
+          "parent": "s_flag",
+          "inputs": {},
+          "fields": { "BACKDROP": ["комната", null] },
+          "shadow": false,
+          "topLevel": false
+        },
+        "s_start": {
+          "opcode": "event_broadcast",
+          "next": null,
+          "parent": "s_backdrop",
+          "inputs": {},
+          "fields": { "BROADCAST_OPTION": ["старт", "brStart"] },
+          "shadow": false,
+          "topLevel": false
+        },
+        "s_onStart": {
+          "opcode": "event_whenbroadcastreceived",
+          "next": "s_resetScore",
+          "parent": null,
+          "inputs": {},
+          "fields": { "BROADCAST_OPTION": ["старт", "brStart"] },
+          "shadow": false,
+          "topLevel": true,
+          "x": 40,
+          "y": 160
+        },
+        "s_resetScore": {
+          "opcode": "data_setvariableto",
+          "next": "s_resetAlive",
+          "parent": "s_onStart",
+          "inputs": { "VALUE": [1, [4, "0"]] },
+          "fields": { "VARIABLE": ["очки", "varScore"] },
+          "shadow": false,
+          "topLevel": false
+        },
+        "s_resetAlive": {
+          "opcode": "data_setvariableto",
+          "next": "s_stopOthers",
+          "parent": "s_resetScore",
+          "inputs": { "VALUE": [1, [4, "1"]] },
+          "fields": { "VARIABLE": ["жива", "varAlive"] },
+          "shadow": false,
+          "topLevel": false
+        },
+        "s_stopOthers": {
+          "opcode": "control_stop",
+          "next": "s_clear",
+          "parent": "s_resetAlive",
+          "inputs": {},
+          "fields": { "STOP_OPTION": ["other scripts in sprite", null] },
+          "shadow": false,
+          "topLevel": false
+        },
+        "s_clear": {
+          "opcode": "event_broadcast",
+          "next": "s_spawnLoop",
+          "parent": "s_resetAlive",
+          "inputs": {},
+          "fields": { "BROADCAST_OPTION": ["очистка", "brClear"] },
+          "shadow": false,
+          "topLevel": false
+        },
+        "s_spawnLoop": {
+          "opcode": "control_forever",
+          "next": null,
+          "parent": "s_clear",
+          "inputs": { "SUBSTACK": [2, "s_waitSpawn"] },
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        },
+        "s_waitSpawn": {
+          "opcode": "control_wait",
+          "next": "s_ifAlive",
+          "parent": "s_spawnLoop",
+          "inputs": { "DURATION": [1, [4, "2.1"]] },
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        },
+        "s_ifAlive": {
+          "opcode": "control_if",
+          "next": null,
+          "parent": "s_waitSpawn",
+          "inputs": {
+            "CONDITION": [2, "s_aliveCheck"],
+            "SUBSTACK": [2, "s_setGap"]
+          },
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        },
+        "s_aliveCheck": {
+          "opcode": "operator_equals",
+          "next": null,
+          "parent": "s_ifAlive",
+          "inputs": {
+            "OPERAND1": [3, "s_aliveVar", [4, "0"]],
+            "OPERAND2": [1, [4, "1"]]
+          },
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        },
+        "s_aliveVar": {
+          "opcode": "data_variable",
+          "next": null,
+          "parent": "s_aliveCheck",
+          "inputs": {},
+          "fields": { "VARIABLE": ["жива", "varAlive"] },
+          "shadow": false,
+          "topLevel": false
+        },
+        "s_setGap": {
+          "opcode": "data_setvariableto",
+          "next": "s_pipe",
+          "parent": "s_ifAlive",
+          "inputs": { "VALUE": [3, "s_gapRandBlock", [4, "10"]] },
+          "fields": { "VARIABLE": ["щель", "varGap"] },
+          "shadow": false,
+          "topLevel": false
+        },
+        "s_gapRandBlock": {
+          "opcode": "operator_random",
+          "next": null,
+          "parent": "s_setGap",
+          "inputs": {
+            "FROM": [1, [4, "-35"]],
+            "TO": [1, [4, "55"]]
+          },
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        },
+        "s_pipe": {
+          "opcode": "event_broadcast",
+          "next": "s_maybeTv",
+          "parent": "s_setGap",
+          "inputs": {},
+          "fields": { "BROADCAST_OPTION": ["труба", "brPipe"] },
+          "shadow": false,
+          "topLevel": false
+        },
+        "s_maybeTv": {
+          "opcode": "control_if",
+          "next": null,
+          "parent": "s_pipe",
+          "inputs": {
+            "CONDITION": [2, "s_tvChance"],
+            "SUBSTACK": [2, "s_tvBroadcast"]
+          },
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        },
+        "s_tvChance": {
+          "opcode": "operator_equals",
+          "next": null,
+          "parent": "s_maybeTv",
+          "inputs": {
+            "OPERAND1": [3, "s_tvRand", [4, "10"]],
+            "OPERAND2": [1, [4, "1"]]
+          },
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        },
+        "s_tvRand": {
+          "opcode": "operator_random",
+          "next": null,
+          "parent": "s_tvChance",
+          "inputs": {
+            "FROM": [1, [4, "1"]],
+            "TO": [1, [4, "3"]]
+          },
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        },
+        "s_tvBroadcast": {
+          "opcode": "event_broadcast",
+          "next": null,
+          "parent": "s_maybeTv",
+          "inputs": {},
+          "fields": { "BROADCAST_OPTION": ["телевизор", "brTv"] },
+          "shadow": false,
+          "topLevel": false
+        },
+        "s_onOver": {
+          "opcode": "event_whenbroadcastreceived",
+          "next": "s_waitRestart",
+          "parent": null,
+          "inputs": {},
+          "fields": { "BROADCAST_OPTION": ["конец", "brOver"] },
+          "shadow": false,
+          "topLevel": true,
+          "x": 40,
+          "y": 360
+        },
+        "s_waitRestart": {
+          "opcode": "control_wait",
+          "next": "s_restartLoop",
+          "parent": "s_onOver",
+          "inputs": { "DURATION": [1, [4, "1.2"]] },
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        },
+        "s_restartLoop": {
+          "opcode": "control_forever",
+          "next": null,
+          "parent": "s_waitRestart",
+          "inputs": { "SUBSTACK": [2, "s_ifRestart"] },
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        },
+        "s_ifRestart": {
+          "opcode": "control_if",
+          "next": null,
+          "parent": "s_restartLoop",
+          "inputs": {
+            "CONDITION": [2, "s_spaceDown"],
+            "SUBSTACK": [2, "s_doRestart"]
+          },
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        },
+        "s_spaceDown": {
+          "opcode": "sensing_keypressed",
+          "next": null,
+          "parent": "s_ifRestart",
+          "inputs": {},
+          "fields": { "KEY_OPTION": ["space", null] },
+          "shadow": false,
+          "topLevel": false
+        },
+        "s_doRestart": {
+          "opcode": "event_broadcast",
+          "next": "s_stopRestart",
+          "parent": "s_ifRestart",
+          "inputs": {},
+          "fields": { "BROADCAST_OPTION": ["старт", "brStart"] },
+          "shadow": false,
+          "topLevel": false
+        },
+        "s_stopRestart": {
+          "opcode": "control_stop",
+          "next": null,
+          "parent": "s_doRestart",
+          "inputs": {},
+          "fields": { "STOP_OPTION": ["this script", null] },
+          "shadow": false,
+          "topLevel": false
+        }
+      },
+      "comments": {},
+      "currentCostume": 0,
+      "costumes": [
+        {
+          "name": "комната",
+          "bitmapResolution": 1,
+          "dataFormat": "png",
+          "assetId": "{{BG_MD5}}",
+          "md5ext": "{{BG_MD5EXT}}",
+          "rotationCenterX": {{BG_CX}},
+          "rotationCenterY": {{BG_CY}}
+        }
+      ],
+      "sounds": [],
+      "volume": 100,
+      "layerOrder": 0,
+      "tempo": 60,
+      "videoTransparency": 50,
+      "videoState": "on",
+      "textToSpeechLanguage": null
+    },
+    {
+      "isStage": false,
+      "name": "Буся",
+      "variables": {
+        "varSpeed": ["скорость", 0]
+      },
+      "lists": {},
+      "broadcasts": {},
+      "blocks": {
+        "b_flag": {
+          "opcode": "event_whenflagclicked",
+          "next": "b_hideInit",
+          "parent": null,
+          "inputs": {},
+          "fields": {},
+          "shadow": false,
+          "topLevel": true,
+          "x": 40,
+          "y": 40
+        },
+        "b_hideInit": {
+          "opcode": "looks_setsizeto",
+          "next": "b_rotStyle",
+          "parent": "b_flag",
+          "inputs": { "SIZE": [1, [4, "38"]] },
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        },
+        "b_rotStyle": {
+          "opcode": "motion_setrotationstyle",
+          "next": null,
+          "parent": "b_hideInit",
+          "inputs": {},
+          "fields": { "ROTATION_STYLE": ["left-right", null] },
+          "shadow": false,
+          "topLevel": false
+        },
+        "b_onStart": {
+          "opcode": "event_whenbroadcastreceived",
+          "next": "b_alive1",
+          "parent": null,
+          "inputs": {},
+          "fields": { "BROADCAST_OPTION": ["старт", "brStart"] },
+          "shadow": false,
+          "topLevel": true,
+          "x": 220,
+          "y": 40
+        },
+        "b_alive1": {
+          "opcode": "data_setvariableto",
+          "next": "b_speed0",
+          "parent": "b_onStart",
+          "inputs": { "VALUE": [1, [4, "1"]] },
+          "fields": { "VARIABLE": ["жива", "varAlive"] },
+          "shadow": false,
+          "topLevel": false
+        },
+        "b_speed0": {
+          "opcode": "data_setvariableto",
+          "next": "b_go",
+          "parent": "b_alive1",
+          "inputs": { "VALUE": [1, [4, "0"]] },
+          "fields": { "VARIABLE": ["скорость", "varSpeed"] },
+          "shadow": false,
+          "topLevel": false
+        },
+        "b_go": {
+          "opcode": "motion_gotoxy",
+          "next": "b_costumeUp",
+          "parent": "b_speed0",
+          "inputs": {
+            "X": [1, [4, "-60"]],
+            "Y": [1, [4, "0"]]
+          },
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        },
+        "b_costumeUp": {
+          "opcode": "looks_switchcostumeto",
+          "next": "b_show",
+          "parent": "b_go",
+          "inputs": {},
+          "fields": { "COSTUME": ["крыло-вверх", null] },
+          "shadow": false,
+          "topLevel": false
+        },
+        "b_show": {
+          "opcode": "looks_show",
+          "next": "b_point0",
+          "parent": "b_costumeUp",
+          "inputs": {},
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        },
+        "b_point0": {
+          "opcode": "motion_pointindirection",
+          "next": null,
+          "parent": "b_show",
+          "inputs": { "DIRECTION": [1, [4, "0"]] },
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        },
+        "b_space": {
+          "opcode": "event_whenkeypressed",
+          "next": "b_jumpCheck",
+          "parent": null,
+          "inputs": {},
+          "fields": { "KEY_OPTION": ["space", null] },
+          "shadow": false,
+          "topLevel": true,
+          "x": 40,
+          "y": 200
+        },
+        "b_click": {
+          "opcode": "event_whenthisspriteclicked",
+          "next": "b_jumpCheck2",
+          "parent": null,
+          "inputs": {},
+          "fields": {},
+          "shadow": false,
+          "topLevel": true,
+          "x": 40,
+          "y": 280
+        },
+        "b_jumpCheck2": {
+          "opcode": "control_if",
+          "next": null,
+          "parent": "b_click",
+          "inputs": {
+            "CONDITION": [2, "b_aliveEq3"],
+            "SUBSTACK": [2, "b_jump2"]
+          },
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        },
+        "b_aliveEq3": {
+          "opcode": "operator_equals",
+          "next": null,
+          "parent": "b_jumpCheck2",
+          "inputs": {
+            "OPERAND1": [3, "b_aliveVar3", [4, "0"]],
+            "OPERAND2": [1, [4, "1"]]
+          },
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        },
+        "b_aliveVar3": {
+          "opcode": "data_variable",
+          "next": null,
+          "parent": "b_aliveEq3",
+          "inputs": {},
+          "fields": { "VARIABLE": ["жива", "varAlive"] },
+          "shadow": false,
+          "topLevel": false
+        },
+        "b_jump2": {
+          "opcode": "data_setvariableto",
+          "next": null,
+          "parent": "b_jumpCheck2",
+          "inputs": { "VALUE": [1, [4, "5.5"]] },
+          "fields": { "VARIABLE": ["скорость", "varSpeed"] },
+          "shadow": false,
+          "topLevel": false
+        },
+        "b_jumpCheck": {
+          "opcode": "control_if",
+          "next": null,
+          "parent": "b_space",
+          "inputs": {
+            "CONDITION": [2, "b_aliveEq"],
+            "SUBSTACK": [2, "b_jump"]
+          },
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        },
+        "b_aliveEq": {
+          "opcode": "operator_equals",
+          "next": null,
+          "parent": "b_jumpCheck",
+          "inputs": {
+            "OPERAND1": [3, "b_aliveVar", [4, "0"]],
+            "OPERAND2": [1, [4, "1"]]
+          },
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        },
+        "b_aliveVar": {
+          "opcode": "data_variable",
+          "next": null,
+          "parent": "b_aliveEq",
+          "inputs": {},
+          "fields": { "VARIABLE": ["жива", "varAlive"] },
+          "shadow": false,
+          "topLevel": false
+        },
+        "b_jump": {
+          "opcode": "data_setvariableto",
+          "next": null,
+          "parent": "b_jumpCheck",
+          "inputs": { "VALUE": [1, [4, "5.5"]] },
+          "fields": { "VARIABLE": ["скорость", "varSpeed"] },
+          "shadow": false,
+          "topLevel": false
+        },
+        "b_forever": {
+          "opcode": "control_forever",
+          "next": null,
+          "parent": null,
+          "inputs": { "SUBSTACK": [2, "b_ifAliveLoop"] },
+          "fields": {},
+          "shadow": false,
+          "topLevel": true,
+          "x": 420,
+          "y": 40
+        },
+        "b_ifAliveLoop": {
+          "opcode": "control_if",
+          "next": null,
+          "parent": "b_forever",
+          "inputs": {
+            "CONDITION": [2, "b_aliveEq2"],
+            "SUBSTACK": [2, "b_moveY"]
+          },
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        },
+        "b_aliveEq2": {
+          "opcode": "operator_equals",
+          "next": null,
+          "parent": "b_ifAliveLoop",
+          "inputs": {
+            "OPERAND1": [3, "b_aliveVar2", [4, "0"]],
+            "OPERAND2": [1, [4, "1"]]
+          },
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        },
+        "b_aliveVar2": {
+          "opcode": "data_variable",
+          "next": null,
+          "parent": "b_aliveEq2",
+          "inputs": {},
+          "fields": { "VARIABLE": ["жива", "varAlive"] },
+          "shadow": false,
+          "topLevel": false
+        },
+        "b_moveY": {
+          "opcode": "motion_changeyby",
+          "next": "b_gravity",
+          "parent": "b_ifAliveLoop",
+          "inputs": { "DY": [3, "b_speedRead", [4, "10"]] },
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        },
+        "b_speedRead": {
+          "opcode": "data_variable",
+          "next": null,
+          "parent": "b_moveY",
+          "inputs": {},
+          "fields": { "VARIABLE": ["скорость", "varSpeed"] },
+          "shadow": false,
+          "topLevel": false
+        },
+        "b_gravity": {
+          "opcode": "data_changevariableby",
+          "next": "b_animate",
+          "parent": "b_moveY",
+          "inputs": { "VALUE": [1, [4, "-0.38"]] },
+          "fields": { "VARIABLE": ["скорость", "varSpeed"] },
+          "shadow": false,
+          "topLevel": false
+        },
+        "b_animate": {
+          "opcode": "control_if_else",
+          "next": "b_tilt",
+          "parent": "b_gravity",
+          "inputs": {
+            "CONDITION": [2, "b_speedPos"],
+            "SUBSTACK": [2, "b_upCostume"],
+            "SUBSTACK2": [2, "b_downCostume"]
+          },
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        },
+        "b_speedPos": {
+          "opcode": "operator_gt",
+          "next": null,
+          "parent": "b_animate",
+          "inputs": {
+            "OPERAND1": [3, "b_speedRead2", [4, "10"]],
+            "OPERAND2": [1, [4, "-0.2"]]
+          },
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        },
+        "b_speedRead2": {
+          "opcode": "data_variable",
+          "next": null,
+          "parent": "b_speedPos",
+          "inputs": {},
+          "fields": { "VARIABLE": ["скорость", "varSpeed"] },
+          "shadow": false,
+          "topLevel": false
+        },
+        "b_upCostume": {
+          "opcode": "looks_switchcostumeto",
+          "next": null,
+          "parent": "b_animate",
+          "inputs": {},
+          "fields": { "COSTUME": ["крыло-вверх", null] },
+          "shadow": false,
+          "topLevel": false
+        },
+        "b_downCostume": {
+          "opcode": "looks_switchcostumeto",
+          "next": null,
+          "parent": "b_animateElse",
+          "inputs": {},
+          "fields": { "COSTUME": ["крыло-вниз", null] },
+          "shadow": false,
+          "topLevel": false
+        },
+        "b_tilt": {
+          "opcode": "motion_pointindirection",
+          "next": "b_dieCheck",
+          "parent": "b_animate",
+          "inputs": { "DIRECTION": [3, "b_tiltCalc", [4, "10"]] },
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        },
+        "b_tiltCalc": {
+          "opcode": "operator_multiply",
+          "next": null,
+          "parent": "b_tilt",
+          "inputs": {
+            "NUM1": [3, "b_speedRead3", [4, "10"]],
+            "NUM2": [1, [4, "4"]]
+          },
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        },
+        "b_speedRead3": {
+          "opcode": "data_variable",
+          "next": null,
+          "parent": "b_tiltCalc",
+          "inputs": {},
+          "fields": { "VARIABLE": ["скорость", "varSpeed"] },
+          "shadow": false,
+          "topLevel": false
+        },
+        "b_dieCheck": {
+          "opcode": "control_if",
+          "next": null,
+          "parent": "b_tilt",
+          "inputs": {
+            "CONDITION": [2, "b_hitSomething"],
+            "SUBSTACK": [2, "b_die"]
+          },
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        },
+        "b_hitSomething": {
+          "opcode": "operator_or",
+          "next": null,
+          "parent": "b_dieCheck",
+          "inputs": {
+            "OPERAND1": [2, "b_hitWardrobe"],
+            "OPERAND2": [2, "b_hitMore"]
+          },
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        },
+        "b_hitWardrobe": {
+          "opcode": "sensing_touchingobject",
+          "next": null,
+          "parent": "b_hitSomething",
+          "inputs": {},
+          "fields": { "TOUCHINGOBJECTMENU": ["Шкаф", null] },
+          "shadow": false,
+          "topLevel": false
+        },
+        "b_hitMore": {
+          "opcode": "operator_or",
+          "next": null,
+          "parent": "b_hitSomething",
+          "inputs": {
+            "OPERAND1": [2, "b_hitTv"],
+            "OPERAND2": [2, "b_hitBounds"]
+          },
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        },
+        "b_hitTv": {
+          "opcode": "sensing_touchingobject",
+          "next": null,
+          "parent": "b_hitMore",
+          "inputs": {},
+          "fields": { "TOUCHINGOBJECTMENU": ["Телевизор", null] },
+          "shadow": false,
+          "topLevel": false
+        },
+        "b_hitBounds": {
+          "opcode": "operator_or",
+          "next": null,
+          "parent": "b_hitMore",
+          "inputs": {
+            "OPERAND1": [2, "b_hitBlanket"],
+            "OPERAND2": [2, "b_hitCeiling"]
+          },
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        },
+        "b_hitBlanket": {
+          "opcode": "sensing_touchingobject",
+          "next": null,
+          "parent": "b_hitBounds",
+          "inputs": {},
+          "fields": { "TOUCHINGOBJECTMENU": ["Плед", null] },
+          "shadow": false,
+          "topLevel": false
+        },
+        "b_hitCeiling": {
+          "opcode": "operator_gt",
+          "next": null,
+          "parent": "b_hitBounds",
+          "inputs": {
+            "OPERAND1": [3, "b_yPos", [4, "10"]],
+            "OPERAND2": [1, [4, "165"]]
+          },
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        },
+        "b_yPos": {
+          "opcode": "motion_yposition",
+          "next": null,
+          "parent": "b_hitCeiling",
+          "inputs": {},
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        },
+        "b_die": {
+          "opcode": "data_setvariableto",
+          "next": "b_deadCostume",
+          "parent": "b_dieCheck",
+          "inputs": { "VALUE": [1, [4, "0"]] },
+          "fields": { "VARIABLE": ["жива", "varAlive"] },
+          "shadow": false,
+          "topLevel": false
+        },
+        "b_deadCostume": {
+          "opcode": "looks_switchcostumeto",
+          "next": "b_broadcastOver",
+          "parent": "b_die",
+          "inputs": {},
+          "fields": { "COSTUME": ["разбилась", null] },
+          "shadow": false,
+          "topLevel": false
+        },
+        "b_broadcastOver": {
+          "opcode": "event_broadcast",
+          "next": null,
+          "parent": "b_deadCostume",
+          "inputs": {},
+          "fields": { "BROADCAST_OPTION": ["конец", "brOver"] },
+          "shadow": false,
+          "topLevel": false
+        }
+      },
+      "comments": {},
+      "currentCostume": 0,
+      "costumes": [
+        {
+          "name": "крыло-вверх",
+          "bitmapResolution": 1,
+          "dataFormat": "png",
+          "assetId": "{{WING_UP_MD5}}",
+          "md5ext": "{{WING_UP_MD5EXT}}",
+          "rotationCenterX": {{WING_CX}},
+          "rotationCenterY": {{WING_CY}}
+        },
+        {
+          "name": "крыло-вниз",
+          "bitmapResolution": 1,
+          "dataFormat": "png",
+          "assetId": "{{WING_DOWN_MD5}}",
+          "md5ext": "{{WING_DOWN_MD5EXT}}",
+          "rotationCenterX": {{WING_CX}},
+          "rotationCenterY": {{WING_CY}}
+        },
+        {
+          "name": "разбилась",
+          "bitmapResolution": 1,
+          "dataFormat": "png",
+          "assetId": "{{DEAD_MD5}}",
+          "md5ext": "{{DEAD_MD5EXT}}",
+          "rotationCenterX": {{WING_CX}},
+          "rotationCenterY": {{WING_CY}}
+        }
+      ],
+      "sounds": [],
+      "volume": 100,
+      "visible": true,
+      "x": -60,
+      "y": 0,
+      "size": 38,
+      "direction": 0,
+      "draggable": false,
+      "rotationStyle": "left-right",
+      "layerOrder": 4
+    },
+    {
+      "isStage": false,
+      "name": "Шкаф",
+      "variables": {
+        "varRole": ["роль", ""],
+        "varScored": ["засчитано", 0]
+      },
+      "lists": {},
+      "broadcasts": {},
+      "blocks": {
+        "w_flag": {
+          "opcode": "event_whenflagclicked",
+          "next": "w_hide",
+          "parent": null,
+          "inputs": {},
+          "fields": {},
+          "shadow": false,
+          "topLevel": true,
+          "x": 40,
+          "y": 40
+        },
+        "w_hide": {
+          "opcode": "looks_hide",
+          "next": null,
+          "parent": "w_flag",
+          "inputs": {},
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        },
+        "w_onPipe": {
+          "opcode": "event_whenbroadcastreceived",
+          "next": "w_roleTop",
+          "parent": null,
+          "inputs": {},
+          "fields": { "BROADCAST_OPTION": ["труба", "brPipe"] },
+          "shadow": false,
+          "topLevel": true,
+          "x": 40,
+          "y": 140
+        },
+        "w_roleTop": {
+          "opcode": "data_setvariableto",
+          "next": "w_scoreTop",
+          "parent": "w_onPipe",
+          "inputs": { "VALUE": [1, [10, "верх"]] },
+          "fields": { "VARIABLE": ["роль", "varRole"] },
+          "shadow": false,
+          "topLevel": false
+        },
+        "w_scoreTop": {
+          "opcode": "data_setvariableto",
+          "next": "w_cloneTop",
+          "parent": "w_roleTop",
+          "inputs": { "VALUE": [1, [4, "0"]] },
+          "fields": { "VARIABLE": ["засчитано", "varScored"] },
+          "shadow": false,
+          "topLevel": false
+        },
+        "w_cloneTop": {
+          "opcode": "control_createcloneof",
+          "next": "w_roleBot",
+          "parent": "w_scoreTop",
+          "inputs": {},
+          "fields": { "CLONE_OPTION": ["_myself_", null] },
+          "shadow": false,
+          "topLevel": false
+        },
+        "w_roleBot": {
+          "opcode": "data_setvariableto",
+          "next": "w_scoreBot",
+          "parent": "w_cloneTop",
+          "inputs": { "VALUE": [1, [10, "низ"]] },
+          "fields": { "VARIABLE": ["роль", "varRole"] },
+          "shadow": false,
+          "topLevel": false
+        },
+        "w_scoreBot": {
+          "opcode": "data_setvariableto",
+          "next": "w_cloneBot",
+          "parent": "w_roleBot",
+          "inputs": { "VALUE": [1, [4, "0"]] },
+          "fields": { "VARIABLE": ["засчитано", "varScored"] },
+          "shadow": false,
+          "topLevel": false
+        },
+        "w_cloneBot": {
+          "opcode": "control_createcloneof",
+          "next": null,
+          "parent": "w_scoreBot",
+          "inputs": {},
+          "fields": { "CLONE_OPTION": ["_myself_", null] },
+          "shadow": false,
+          "topLevel": false
+        },
+        "w_onClear": {
+          "opcode": "event_whenbroadcastreceived",
+          "next": "w_ifClone",
+          "parent": null,
+          "inputs": {},
+          "fields": { "BROADCAST_OPTION": ["очистка", "brClear"] },
+          "shadow": false,
+          "topLevel": true,
+          "x": 40,
+          "y": 300
+        },
+        "w_ifClone": {
+          "opcode": "control_if",
+          "next": null,
+          "parent": "w_onClear",
+          "inputs": {
+            "CONDITION": [2, "w_isClone"],
+            "SUBSTACK": [2, "w_delete"]
+          },
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        },
+        "w_isClone": {
+          "opcode": "operator_gt",
+          "next": null,
+          "parent": "w_ifClone",
+          "inputs": {
+            "OPERAND1": [3, "w_cloneNum", [4, "10"]],
+            "OPERAND2": [1, [4, "0"]]
+          },
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        },
+        "w_cloneNum": {
+          "opcode": "sensing_of",
+          "next": null,
+          "parent": "w_isClone",
+          "inputs": {},
+          "fields": {
+            "OBJECT": ["_myself_", null],
+            "PROPERTY": ["clone #", null]
+          },
+          "shadow": false,
+          "topLevel": false
+        },
+        "w_delete": {
+          "opcode": "control_deletethisclone",
+          "next": null,
+          "parent": "w_ifClone",
+          "inputs": {},
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        },
+        "w_cloneStart": {
+          "opcode": "control_startasclone",
+          "next": "w_ifTop",
+          "parent": null,
+          "inputs": {},
+          "fields": {},
+          "shadow": false,
+          "topLevel": true,
+          "x": 300,
+          "y": 40
+        },
+        "w_ifTop": {
+          "opcode": "control_if",
+          "next": "w_ifBot",
+          "parent": "w_cloneStart",
+          "inputs": {
+            "CONDITION": [2, "w_roleIsTop"],
+            "SUBSTACK": [2, "w_setupTop"]
+          },
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        },
+        "w_roleIsTop": {
+          "opcode": "operator_equals",
+          "next": null,
+          "parent": "w_ifTop",
+          "inputs": {
+            "OPERAND1": [3, "w_roleRead", [4, "10"]],
+            "OPERAND2": [1, [10, "верх"]]
+          },
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        },
+        "w_roleRead": {
+          "opcode": "data_variable",
+          "next": null,
+          "parent": "w_roleIsTop",
+          "inputs": {},
+          "fields": { "VARIABLE": ["роль", "varRole"] },
+          "shadow": false,
+          "topLevel": false
+        },
+        "w_setupTop": {
+          "opcode": "looks_switchcostumeto",
+          "next": "w_posTop",
+          "parent": "w_ifTop",
+          "inputs": {},
+          "fields": { "COSTUME": ["шкаф-верх", null] },
+          "shadow": false,
+          "topLevel": false
+        },
+        "w_posTop": {
+          "opcode": "motion_gotoxy",
+          "next": "w_showTop",
+          "parent": "w_setupTop",
+          "inputs": {
+            "X": [1, [4, "260"]],
+            "Y": [3, "w_gapTop", [4, "10"]]
+          },
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        },
+        "w_gapTop": {
+          "opcode": "operator_add",
+          "next": null,
+          "parent": "w_posTop",
+          "inputs": {
+            "NUM1": [3, "w_gapRead", [4, "10"]],
+            "NUM2": [1, [4, "95"]]
+          },
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        },
+        "w_gapRead": {
+          "opcode": "data_variable",
+          "next": null,
+          "parent": "w_gapTop",
+          "inputs": {},
+          "fields": { "VARIABLE": ["щель", "varGap"] },
+          "shadow": false,
+          "topLevel": false
+        },
+        "w_showTop": {
+          "opcode": "looks_show",
+          "next": "w_moveLoop",
+          "parent": "w_posTop",
+          "inputs": {},
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        },
+        "w_ifBot": {
+          "opcode": "control_if",
+          "next": "w_moveLoop",
+          "parent": "w_ifTop",
+          "inputs": {
+            "CONDITION": [2, "w_roleIsBot"],
+            "SUBSTACK": [2, "w_setupBot"]
+          },
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        },
+        "w_roleIsBot": {
+          "opcode": "operator_equals",
+          "next": null,
+          "parent": "w_ifBot",
+          "inputs": {
+            "OPERAND1": [3, "w_roleRead2", [4, "10"]],
+            "OPERAND2": [1, [10, "низ"]]
+          },
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        },
+        "w_roleRead2": {
+          "opcode": "data_variable",
+          "next": null,
+          "parent": "w_roleIsBot",
+          "inputs": {},
+          "fields": { "VARIABLE": ["роль", "varRole"] },
+          "shadow": false,
+          "topLevel": false
+        },
+        "w_setupBot": {
+          "opcode": "looks_switchcostumeto",
+          "next": "w_posBot",
+          "parent": "w_ifBot",
+          "inputs": {},
+          "fields": { "COSTUME": ["шкаф-низ", null] },
+          "shadow": false,
+          "topLevel": false
+        },
+        "w_posBot": {
+          "opcode": "motion_gotoxy",
+          "next": "w_showBot",
+          "parent": "w_setupBot",
+          "inputs": {
+            "X": [1, [4, "260"]],
+            "Y": [3, "w_gapBot", [4, "10"]]
+          },
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        },
+        "w_gapBot": {
+          "opcode": "operator_subtract",
+          "next": null,
+          "parent": "w_posBot",
+          "inputs": {
+            "NUM1": [3, "w_gapRead2", [4, "10"]],
+            "NUM2": [1, [4, "95"]]
+          },
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        },
+        "w_gapRead2": {
+          "opcode": "data_variable",
+          "next": null,
+          "parent": "w_gapBot",
+          "inputs": {},
+          "fields": { "VARIABLE": ["щель", "varGap"] },
+          "shadow": false,
+          "topLevel": false
+        },
+        "w_showBot": {
+          "opcode": "looks_show",
+          "next": null,
+          "parent": "w_posBot",
+          "inputs": {},
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        },
+        "w_moveLoop": {
+          "opcode": "control_repeat_until",
+          "next": "w_del",
+          "parent": "w_showTop",
+          "inputs": {
+            "CONDITION": [2, "w_offScreen"],
+            "SUBSTACK": [2, "w_step"]
+          },
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        },
+        "w_offScreen": {
+          "opcode": "operator_lt",
+          "next": null,
+          "parent": "w_moveLoop",
+          "inputs": {
+            "OPERAND1": [3, "w_xPos", [4, "10"]],
+            "OPERAND2": [1, [4, "-280"]]
+          },
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        },
+        "w_xPos": {
+          "opcode": "motion_xposition",
+          "next": null,
+          "parent": "w_offScreen",
+          "inputs": {},
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        },
+        "w_step": {
+          "opcode": "motion_changexby",
+          "next": "w_scoreCheck",
+          "parent": "w_moveLoop",
+          "inputs": { "DX": [1, [4, "-3.6"]] },
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        },
+        "w_scoreCheck": {
+          "opcode": "control_if",
+          "next": null,
+          "parent": "w_step",
+          "inputs": {
+            "CONDITION": [2, "w_canScore"],
+            "SUBSTACK": [2, "w_addScore"]
+          },
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        },
+        "w_canScore": {
+          "opcode": "operator_and",
+          "next": null,
+          "parent": "w_scoreCheck",
+          "inputs": {
+            "OPERAND1": [2, "w_isBotRole"],
+            "OPERAND2": [2, "w_scoreCond"]
+          },
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        },
+        "w_isBotRole": {
+          "opcode": "operator_equals",
+          "next": null,
+          "parent": "w_canScore",
+          "inputs": {
+            "OPERAND1": [3, "w_roleRead3", [4, "10"]],
+            "OPERAND2": [1, [10, "низ"]]
+          },
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        },
+        "w_roleRead3": {
+          "opcode": "data_variable",
+          "next": null,
+          "parent": "w_isBotRole",
+          "inputs": {},
+          "fields": { "VARIABLE": ["роль", "varRole"] },
+          "shadow": false,
+          "topLevel": false
+        },
+        "w_scoreCond": {
+          "opcode": "operator_and",
+          "next": null,
+          "parent": "w_canScore",
+          "inputs": {
+            "OPERAND1": [2, "w_pastBusya"],
+            "OPERAND2": [2, "w_notScored"]
+          },
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        },
+        "w_pastBusya": {
+          "opcode": "operator_lt",
+          "next": null,
+          "parent": "w_scoreCond",
+          "inputs": {
+            "OPERAND1": [3, "w_xPos2", [4, "10"]],
+            "OPERAND2": [1, [4, "-45"]]
+          },
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        },
+        "w_xPos2": {
+          "opcode": "motion_xposition",
+          "next": null,
+          "parent": "w_pastBusya",
+          "inputs": {},
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        },
+        "w_notScored": {
+          "opcode": "operator_equals",
+          "next": null,
+          "parent": "w_scoreCond",
+          "inputs": {
+            "OPERAND1": [3, "w_scoredRead", [4, "10"]],
+            "OPERAND2": [1, [4, "0"]]
+          },
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        },
+        "w_scoredRead": {
+          "opcode": "data_variable",
+          "next": null,
+          "parent": "w_notScored",
+          "inputs": {},
+          "fields": { "VARIABLE": ["засчитано", "varScored"] },
+          "shadow": false,
+          "topLevel": false
+        },
+        "w_addScore": {
+          "opcode": "data_changevariableby",
+          "next": "w_markScored",
+          "parent": "w_scoreCheck",
+          "inputs": { "VALUE": [1, [4, "1"]] },
+          "fields": { "VARIABLE": ["очки", "varScore"] },
+          "shadow": false,
+          "topLevel": false
+        },
+        "w_markScored": {
+          "opcode": "data_setvariableto",
+          "next": null,
+          "parent": "w_addScore",
+          "inputs": { "VALUE": [1, [4, "1"]] },
+          "fields": { "VARIABLE": ["засчитано", "varScored"] },
+          "shadow": false,
+          "topLevel": false
+        },
+        "w_del": {
+          "opcode": "control_deletethisclone",
+          "next": null,
+          "parent": "w_moveLoop",
+          "inputs": {},
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        }
+      },
+      "comments": {},
+      "currentCostume": 0,
+      "costumes": [
+        {
+          "name": "шкаф-низ",
+          "bitmapResolution": 1,
+          "dataFormat": "png",
+          "assetId": "{{WARDROBE_MD5}}",
+          "md5ext": "{{WARDROBE_MD5EXT}}",
+          "rotationCenterX": {{WARDROBE_CX}},
+          "rotationCenterY": {{WARDROBE_CY}}
+        },
+        {
+          "name": "шкаф-верх",
+          "bitmapResolution": 1,
+          "dataFormat": "png",
+          "assetId": "{{WARDROBE_TOP_MD5}}",
+          "md5ext": "{{WARDROBE_TOP_MD5EXT}}",
+          "rotationCenterX": {{WARDROBE_CX_TOP}},
+          "rotationCenterY": {{WARDROBE_CY_TOP}}
+        }
+      ],
+      "sounds": [],
+      "volume": 100,
+      "visible": false,
+      "x": 280,
+      "y": 0,
+      "size": 65,
+      "direction": 90,
+      "draggable": false,
+      "rotationStyle": "don't rotate",
+      "layerOrder": 2
+    },
+    {
+      "isStage": false,
+      "name": "Плед",
+      "variables": {},
+      "lists": {},
+      "broadcasts": {},
+      "blocks": {
+        "bl_flag": {
+          "opcode": "event_whenflagclicked",
+          "next": "bl_setup",
+          "parent": null,
+          "inputs": {},
+          "fields": {},
+          "shadow": false,
+          "topLevel": true,
+          "x": 40,
+          "y": 40
+        },
+        "bl_setup": {
+          "opcode": "looks_setsizeto",
+          "next": "bl_pos",
+          "parent": "bl_flag",
+          "inputs": { "SIZE": [1, [4, "115"]] },
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        },
+        "bl_pos": {
+          "opcode": "motion_gotoxy",
+          "next": "bl_show",
+          "parent": "bl_setup",
+          "inputs": {
+            "X": [1, [4, "0"]],
+            "Y": [1, [4, "-158"]]
+          },
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        },
+        "bl_show": {
+          "opcode": "looks_show",
+          "next": null,
+          "parent": "bl_pos",
+          "inputs": {},
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        }
+      },
+      "comments": {},
+      "currentCostume": 0,
+      "costumes": [
+        {
+          "name": "плед",
+          "bitmapResolution": 1,
+          "dataFormat": "png",
+          "assetId": "{{BLANKET_MD5}}",
+          "md5ext": "{{BLANKET_MD5EXT}}",
+          "rotationCenterX": {{BLANKET_CX}},
+          "rotationCenterY": {{BLANKET_CY}}
+        }
+      ],
+      "sounds": [],
+      "volume": 100,
+      "visible": true,
+      "x": 0,
+      "y": -158,
+      "size": 115,
+      "direction": 90,
+      "draggable": false,
+      "rotationStyle": "don't rotate",
+      "layerOrder": 1
+    },
+    {
+      "isStage": false,
+      "name": "Телевизор",
+      "variables": {},
+      "lists": {},
+      "broadcasts": {},
+      "blocks": {
+        "t_flag": {
+          "opcode": "event_whenflagclicked",
+          "next": "t_hide",
+          "parent": null,
+          "inputs": {},
+          "fields": {},
+          "shadow": false,
+          "topLevel": true,
+          "x": 40,
+          "y": 40
+        },
+        "t_hide": {
+          "opcode": "looks_hide",
+          "next": null,
+          "parent": "t_flag",
+          "inputs": {},
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        },
+        "t_onTv": {
+          "opcode": "event_whenbroadcastreceived",
+          "next": "t_clone",
+          "parent": null,
+          "inputs": {},
+          "fields": { "BROADCAST_OPTION": ["телевизор", "brTv"] },
+          "shadow": false,
+          "topLevel": true,
+          "x": 40,
+          "y": 140
+        },
+        "t_clone": {
+          "opcode": "control_createcloneof",
+          "next": null,
+          "parent": "t_onTv",
+          "inputs": {},
+          "fields": { "CLONE_OPTION": ["_myself_", null] },
+          "shadow": false,
+          "topLevel": false
+        },
+        "t_onClear": {
+          "opcode": "event_whenbroadcastreceived",
+          "next": "t_ifClone",
+          "parent": null,
+          "inputs": {},
+          "fields": { "BROADCAST_OPTION": ["очистка", "brClear"] },
+          "shadow": false,
+          "topLevel": true,
+          "x": 40,
+          "y": 260
+        },
+        "t_ifClone": {
+          "opcode": "control_if",
+          "next": null,
+          "parent": "t_onClear",
+          "inputs": {
+            "CONDITION": [2, "t_isClone"],
+            "SUBSTACK": [2, "t_delete"]
+          },
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        },
+        "t_isClone": {
+          "opcode": "operator_gt",
+          "next": null,
+          "parent": "t_ifClone",
+          "inputs": {
+            "OPERAND1": [3, "t_cloneNum", [4, "10"]],
+            "OPERAND2": [1, [4, "0"]]
+          },
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        },
+        "t_cloneNum": {
+          "opcode": "sensing_of",
+          "next": null,
+          "parent": "t_isClone",
+          "inputs": {},
+          "fields": {
+            "OBJECT": ["_myself_", null],
+            "PROPERTY": ["clone #", null]
+          },
+          "shadow": false,
+          "topLevel": false
+        },
+        "t_delete": {
+          "opcode": "control_deletethisclone",
+          "next": null,
+          "parent": "t_ifClone",
+          "inputs": {},
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        },
+        "t_cloneStart": {
+          "opcode": "control_startasclone",
+          "next": "t_size",
+          "parent": null,
+          "inputs": {},
+          "fields": {},
+          "shadow": false,
+          "topLevel": true,
+          "x": 300,
+          "y": 40
+        },
+        "t_size": {
+          "opcode": "looks_setsizeto",
+          "next": "t_pos",
+          "parent": "t_cloneStart",
+          "inputs": { "SIZE": [1, [4, "48"]] },
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        },
+        "t_pos": {
+          "opcode": "motion_gotoxy",
+          "next": "t_show",
+          "parent": "t_size",
+          "inputs": {
+            "X": [1, [4, "280"]],
+            "Y": [3, "t_randY", [4, "10"]]
+          },
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        },
+        "t_randY": {
+          "opcode": "operator_random",
+          "next": null,
+          "parent": "t_pos",
+          "inputs": {
+            "FROM": [1, [4, "-70"]],
+            "TO": [1, [4, "90"]]
+          },
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        },
+        "t_show": {
+          "opcode": "looks_show",
+          "next": "t_loop",
+          "parent": "t_pos",
+          "inputs": {},
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        },
+        "t_loop": {
+          "opcode": "control_repeat_until",
+          "next": "t_del",
+          "parent": "t_show",
+          "inputs": {
+            "CONDITION": [2, "t_off"],
+            "SUBSTACK": [2, "t_move"]
+          },
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        },
+        "t_off": {
+          "opcode": "operator_lt",
+          "next": null,
+          "parent": "t_loop",
+          "inputs": {
+            "OPERAND1": [3, "t_xPos", [4, "10"]],
+            "OPERAND2": [1, [4, "-300"]]
+          },
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        },
+        "t_xPos": {
+          "opcode": "motion_xposition",
+          "next": null,
+          "parent": "t_off",
+          "inputs": {},
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        },
+        "t_move": {
+          "opcode": "motion_changexby",
+          "next": null,
+          "parent": "t_loop",
+          "inputs": { "DX": [1, [4, "-4.2"]] },
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        },
+        "t_del": {
+          "opcode": "control_deletethisclone",
+          "next": null,
+          "parent": "t_loop",
+          "inputs": {},
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        }
+      },
+      "comments": {},
+      "currentCostume": 0,
+      "costumes": [
+        {
+          "name": "телевизор",
+          "bitmapResolution": 1,
+          "dataFormat": "png",
+          "assetId": "{{TV_MD5}}",
+          "md5ext": "{{TV_MD5EXT}}",
+          "rotationCenterX": {{TV_CX}},
+          "rotationCenterY": {{TV_CY}}
+        }
+      ],
+      "sounds": [],
+      "volume": 100,
+      "visible": false,
+      "x": 280,
+      "y": 0,
+      "size": 48,
+      "direction": 90,
+      "draggable": false,
+      "rotationStyle": "don't rotate",
+      "layerOrder": 3
+    }
+  ],
+  "monitors": [
+    {
+      "id": "monScore",
+      "mode": "default",
+      "opcode": "data_variable",
+      "params": { "VARIABLE": "очки" },
+      "spriteName": null,
+      "value": 0,
+      "width": 0,
+      "height": 0,
+      "x": 5,
+      "y": 5,
+      "visible": true,
+      "sliderMin": 0,
+      "sliderMax": 100,
+      "isDiscrete": true
+    }
+  ],
+  "extensions": [],
+  "meta": {
+    "semver": "3.0.0",
+    "vm": "11.5.0",
+    "agent": "Flappy Busya Builder"
+  }
+}
